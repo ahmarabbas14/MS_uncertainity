@@ -245,6 +245,12 @@
                 }
             },
             {
+                "class_name": "MonteCarloDropout",
+                "config": {
+                    "rate": 0.5
+                }
+            },
+            {
                 "class_name": "Conv3D",
                 "config": {
                     "filters": 512,
@@ -255,6 +261,12 @@
                 },
                 "normalizer": {
                     "class_name": "BatchNormalization"
+                }
+            },
+            {
+                "class_name": "MonteCarloDropout",
+                "config": {
+                    "rate": 0.5
                 }
             },
             {
