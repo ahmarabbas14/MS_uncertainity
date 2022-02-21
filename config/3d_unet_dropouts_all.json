@@ -125,6 +125,12 @@
                 }
             },
             {
+                "class_name": "Dropout",
+                "config": {
+                    "rate": 0.5
+                }
+            },
+            {
                 "class_name": "Conv3D",
                 "config": {
                     "filters": 32,
@@ -137,6 +143,12 @@
                     "class_name": "BatchNormalization"
                 },
                 "name": "conv1"
+            },
+            {
+                "class_name": "Dropout",
+                "config": {
+                    "rate": 0.5
+                }
             },
             {
                 "class_name": "MaxPooling3D"
@@ -152,6 +164,12 @@
                 },
                 "normalizer": {
                     "class_name": "BatchNormalization"
+                }
+            },
+            {
+                "class_name": "Dropout",
+                "config": {
+                    "rate": 0.5
                 }
             },
             {
@@ -169,6 +187,12 @@
                 "name": "conv2"
             },
             {
+                "class_name": "Dropout",
+                "config": {
+                    "rate": 0.5
+                }
+            },
+            {
                 "class_name": "MaxPooling3D"
             },
             {
@@ -182,6 +206,12 @@
                 },
                 "normalizer": {
                     "class_name": "BatchNormalization"
+                }
+            },
+            {
+                "class_name": "Dropout",
+                "config": {
+                    "rate": 0.5
                 }
             },
             {
@@ -199,6 +229,12 @@
                 "name": "conv3"
             },
             {
+                "class_name": "Dropout",
+                "config": {
+                    "rate": 0.5
+                }
+            },
+            {
                 "class_name": "MaxPooling3D"
             },
             {
@@ -212,6 +248,12 @@
                 },
                 "normalizer": {
                     "class_name": "BatchNormalization"
+                }
+            },
+            {
+                "class_name": "Dropout",
+                "config": {
+                    "rate": 0.5
                 }
             },
             {
@@ -229,6 +271,12 @@
                 "name": "conv4"
             },
             {
+                "class_name": "Dropout",
+                "config": {
+                    "rate": 0.5
+                }
+            },
+            {
                 "class_name": "MaxPooling3D"
             },
             {
@@ -245,6 +293,12 @@
                 }
             },
             {
+                "class_name": "Dropout",
+                "config": {
+                    "rate": 0.5
+                }
+            },
+            {
                 "class_name": "Conv3D",
                 "config": {
                     "filters": 512,
@@ -255,6 +309,12 @@
                 },
                 "normalizer": {
                     "class_name": "BatchNormalization"
+                }
+            },
+            {
+                "class_name": "Dropout",
+                "config": {
+                    "rate": 0.5
                 }
             },
             {
@@ -299,6 +359,12 @@
                 }
             },
             {
+                "class_name": "Dropout",
+                "config": {
+                    "rate": 0.5
+                }
+            },
+            {
                 "name": "upconv3",
                 "class_name": "Conv3DTranspose",
                 "config": {
@@ -337,6 +403,12 @@
                 },
                 "normalizer": {
                     "class_name": "BatchNormalization"
+                }
+            },
+            {
+                "class_name": "Dropout",
+                "config": {
+                    "rate": 0.5
                 }
             },
             {
@@ -381,6 +453,12 @@
                 }
             },
             {
+                "class_name": "Dropout",
+                "config": {
+                    "rate": 0.5
+                }
+            },
+            {
                 "name": "upconv1",
                 "class_name": "Conv3DTranspose",
                 "config": {
@@ -419,6 +497,12 @@
                 },
                 "normalizer": {
                     "class_name": "BatchNormalization"
+                }
+            },
+            {
+                "class_name": "Dropout",
+                "config": {
+                    "rate": 0.5
                 }
             },
             {

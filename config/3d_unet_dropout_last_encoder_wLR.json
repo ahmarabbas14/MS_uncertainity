@@ -96,7 +96,7 @@
         "optimizer": {
             "class_name": "adam",
             "config": {
-                "learning_rate": 0.0001
+                "learning_rate": 0.001
             }
         },
         "metrics": [
@@ -245,6 +245,12 @@
                 }
             },
             {
+                "class_name": "Dropout",
+                "config": {
+                    "rate": 0.5
+                }
+            },
+            {
                 "class_name": "Conv3D",
                 "config": {
                     "filters": 512,
@@ -255,6 +261,12 @@
                 },
                 "normalizer": {
                     "class_name": "BatchNormalization"
+                }
+            },
+            {
+                "class_name": "Dropout",
+                "config": {
+                    "rate": 0.5
                 }
             },
             {
