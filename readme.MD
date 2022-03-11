@@ -42,8 +42,8 @@ From your `$HOME` directory
 cd MS_uncertainity
 sbatch --array=1-5%1 --nodelist=gn-0 slurm_uncertainty.sh uncertainty/3d_unet.json 3d_unet mc_3d_unet --best_epoch 55
 sbatch --array=6-10%1 --nodelist=gn-1 slurm_uncertainty.sh uncertainty/3d_unet.json 3d_unet mc_3d_unet --best_epoch 55
-sbatch --array=10-15%1 --nodelist=gn-2 slurm_uncertainty.sh uncertainty/3d_unet.json 3d_unet mc_3d_unet --best_epoch 55
-sbatch --array=15-20%1 --nodelist=gn-3 slurm_uncertainty.sh uncertainty/3d_unet.json 3d_unet mc_3d_unet --best_epoch 55
+sbatch --array=11-15%1 --nodelist=gn-2 slurm_uncertainty.sh uncertainty/3d_unet.json 3d_unet mc_3d_unet --best_epoch 55
+sbatch --array=16-20%1 --nodelist=gn-3 slurm_uncertainty.sh uncertainty/3d_unet.json 3d_unet mc_3d_unet --best_epoch 55
 ```
 Which will load the mc model with the weights from epoch 55 of the trained model, and save to files 20 times
 
