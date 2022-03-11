@@ -15,7 +15,7 @@
         "class_name": "H5Reader",
         "config": {
             "filename": "/home/work/ahab/hn_delin/headneck_3d_new.h5",
-            "batch_size": 2,
+            "batch_size": 1,
             "batch_cache": 1,
             "x_name": "input",
             "y_name": "target",

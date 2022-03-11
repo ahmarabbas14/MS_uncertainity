@@ -48,27 +48,49 @@ if __name__ == '__main__':
     #     ex.from_file(args.log_folder +
     #                  f'/model/model.{args.best_epoch:03d}.h5')
 
+    @tf.custom_gradient
+    def _GuidedBackPropRelu(x):
+        res = tf.nn.relu(x)
 
+        def grad(dy):
+            return dy * tf.cast(dy > 0., x.dtype) * tf.cast(x > 0., x.dtype)
+
+        return res, grad
+    print('Loading model from ', args.config_file, ' with weights from model ', args.log_folder, ' epoch ', args.best_epoch)
     mc_model = model_from_full_config(args.config_file, weights_file=args.log_folder +
                      f'/model/model.{args.best_epoch:03d}.h5')
+
+    for layer in mc_model.model.layers:
+        if 'activation' in layer.get_config():
+            if 'relu' in layer.activation.__name__:
+                layer.activation = _GuidedBackPropRelu
+
+    predict_fn = tf.function(mc_model.model)
+    # predict_fn = tf.function(tf.keras.models.Model(mc_model.model.inputs, mc_model.model.output))
 
     last_layer = mc_model.model.layers[-1].name
 
     # go through test data
     dr = mc_model.data_reader
     test_gen = dr.test_generator.generate()
-    BATCH_SIZE = 2
+    BATCH_SIZE = 1
 
+    print('initializing output files')
     with h5py.File(args.output_file, 'w') as f:
         f.create_dataset('mc_output',
                         data=np.zeros((40, 173, 191, 265, 1)),
                         chunks=(1, 173, 191, 265, 1), compression='gzip')
-        # f.create_dataset('gb_output', data=np.zeros((40, 173, 191, 265, 2)),
-        #                 chunks=(1, 173, 191, 265, 2), compression='gzip')
+        f.create_dataset('gb_output', data=np.zeros((40, 173, 191, 265, 2)),
+                        chunks=(1, 173, 191, 265, 2), compression='gzip')
 
+    print('calculating outputs')
     for i, (images, target) in enumerate(test_gen):
         print('calculating for batch', i)
-        mc_output = mc_model.predict(images)
+        img_tensor = tf.constant(images)
+        with tf.GradientTape() as tape:
+            tape.watch(img_tensor)
+            mc_output = predict_fn(img_tensor)
+        gb_output = tape.gradient(mc_output, img_tensor)
 
         # gb_output = mc_model.guided_backprop(last_layer, images)
 
@@ -76,5 +98,8 @@ if __name__ == '__main__':
 
         print('saving to file....')
         with h5py.File(args.output_file, 'a') as f:
-            f['mc_output'][start:end] = mc_output
-            # f['gb_output'][start:end] = gb_output
+            f['mc_output'][start:end] = mc_output.numpy()
+            f['gb_output'][start:end] = gb_output.numpy()
+
+        if i >= 40:
+            break

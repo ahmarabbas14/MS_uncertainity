@@ -53,4 +53,4 @@ nvidia-modprobe -u -c=0
 # export ITER_PER_EPOCH=100
 # export NUM_CPUS=4
 export RAY_ROOT=$TMPDIR/$USER/ray
-singularity exec --nv deoxys-new.sif python uncertainty.py $1 $HOME/hnperf/$2 $HOME/hnperf/$2/$3_$SLURM_ARRAY_TASK_ID.h5  --temp_folder $SCRATCH/hnperf/$2 --analysis_folder $SCRATCH/analysis/$2 ${@:4}
+singularity exec --nv deoxys-new.sif python -u uncertainty.py $1 $HOME/hnperf/$2 $HOME/hnperf/$2/$3_$SLURM_ARRAY_TASK_ID.h5  --temp_folder $SCRATCH/hnperf/$2 --analysis_folder $SCRATCH/analysis/$2 ${@:4}
