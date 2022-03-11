@@ -40,6 +40,6 @@ Which will save the trained model every 5 epochs and predict the validation set 
 From your `$HOME` directory
 ```bash
 cd MS_uncertainity
-sbatch --array=1-20%5 slurm.sh uncertainty/3d_unet.json 3d_unet mc_3d_unet
+sbatch --array=1-20%5 slurm_uncertainty.sh uncertainty/3d_unet.json 3d_unet mc_3d_unet
 ```
 Which will load the mc model with the weights from the trained model, and save to files 20 times
