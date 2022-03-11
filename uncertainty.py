@@ -62,7 +62,7 @@ if __name__ == '__main__':
         f.create_dataset('mc_output',
                         data=np.zeros((40, 173, 191, 265, 1)),
                         chunks=(1, 173, 191, 265, 1), compression='gzip')
-        f.create_dataset('gb_output', data=np.zeros(40, 173, 191, 265, 2),
+        f.create_dataset('gb_output', data=np.zeros((40, 173, 191, 265, 2)),
                         chunks=(1, 173, 191, 265, 2), compression='gzip')
 
     for i, (images, target) in enumerate(test_gen):
