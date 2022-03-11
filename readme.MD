@@ -43,3 +43,11 @@ cd MS_uncertainity
 sbatch --array=1-20%5 slurm_uncertainty.sh uncertainty/3d_unet.json 3d_unet mc_3d_unet --best_epoch 55
 ```
 Which will load the mc model with the weights from epoch 55 of the trained model, and save to files 20 times
+
+
+# setip
+```
+qlogin --partition gpu --nodelist gn-1
+rm $TMPDIR/$USER/hn_delin/headneck_3d_new.h5
+cp -r $HOME/datasets/headneck/headneck_3d_new.h5 $TMPDIR/$USER/hn_delin/
+```

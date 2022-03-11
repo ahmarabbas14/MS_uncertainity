@@ -6,6 +6,7 @@ import argparse
 import h5py
 
 
+
 if __name__ == '__main__':
     gpus = tf.config.list_physical_devices('GPU')
     if not gpus:
@@ -62,18 +63,18 @@ if __name__ == '__main__':
         f.create_dataset('mc_output',
                         data=np.zeros((40, 173, 191, 265, 1)),
                         chunks=(1, 173, 191, 265, 1), compression='gzip')
-        f.create_dataset('gb_output', data=np.zeros((40, 173, 191, 265, 2)),
-                        chunks=(1, 173, 191, 265, 2), compression='gzip')
+        # f.create_dataset('gb_output', data=np.zeros((40, 173, 191, 265, 2)),
+        #                 chunks=(1, 173, 191, 265, 2), compression='gzip')
 
     for i, (images, target) in enumerate(test_gen):
         print('calculating for batch', i)
         mc_output = mc_model.predict(images)
 
-        gb_output = mc_model.guided_backprop(last_layer, images)
+        # gb_output = mc_model.guided_backprop(last_layer, images)
 
         start, end = i*BATCH_SIZE, (i+1) * BATCH_SIZE
 
         print('saving to file....')
         with h5py.File(args.output_file, 'a') as f:
             f['mc_output'][start:end] = mc_output
-            f['gb_output'][start:end] = gb_output
+            # f['gb_output'][start:end] = gb_output
