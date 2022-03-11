@@ -28,28 +28,28 @@ if __name__ == '__main__':
 
     args, unknown = parser.parse_known_args()
 
-    ex = ExperimentPipeline(
-        log_base_path=args.log_folder,
-        temp_base_path=args.temp_folder
-    )
+    # ex = ExperimentPipeline(
+    #     log_base_path=args.log_folder,
+    #     temp_base_path=args.temp_folder
+    # )
 
-    if args.best_epoch == 0:
-        try:
-            ex = ex.load_best_model(
-                monitor=args.monitor,
-                recipe='auto',
-                map_meta_data=args.meta,
-            )
-        except Exception as e:
-            print(e)
-    else:
-        print(f'Loading model from epoch {args.best_epoch}')
-        ex.from_file(args.log_folder +
+    # if args.best_epoch == 0:
+    #     try:
+    #         ex = ex.load_best_model(
+    #             monitor=args.monitor,
+    #             recipe='auto',
+    #             map_meta_data=args.meta,
+    #         )
+    #     except Exception as e:
+    #         print(e)
+    # else:
+    #     print(f'Loading model from epoch {args.best_epoch}')
+    #     ex.from_file(args.log_folder +
+    #                  f'/model/model.{args.best_epoch:03d}.h5')
+
+
+    mc_model = model_from_full_config(args.config_file, weights_file=args.log_folder +
                      f'/model/model.{args.best_epoch:03d}.h5')
-
-
-    mc_model = model_from_full_config(args.config_file)
-    mc_model.model.set_weights([w.numpy() for w in ex.model.model.weights])
 
     last_layer = mc_model.model.layers[-1].name
 
