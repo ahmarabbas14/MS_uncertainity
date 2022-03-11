@@ -23,7 +23,7 @@ if __name__ == '__main__':
     parser.add_argument("--prediction_checkpoint_period", default=5, type=int)
     parser.add_argument("--meta", default='patient_idx', type=str)
     parser.add_argument("--monitor", default='', type=str)
-    parser.add_argument("--best_epoch", default=0, type=str)
+    parser.add_argument("--best_epoch", default=0, type=int)
     parser.add_argument("--memory_limit", default=0, type=int)
 
     args, unknown = parser.parse_known_args()
