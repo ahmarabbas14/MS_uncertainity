@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
 
     mc_model = model_from_full_config(args.config_file)
-    mc_model.set_weights([w.numpy() for w in ex.model.model.weights])
+    mc_model.model.set_weights([w.numpy() for w in ex.model.model.weights])
 
     last_layer = mc_model.model.layers[-1].name
 
