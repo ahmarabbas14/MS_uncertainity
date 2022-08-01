@@ -34,13 +34,14 @@ with h5py.File(filepath_raw.format(1), 'r') as rf:
             ground_truths.append(rf[test_fold]['target'][i])
 
 # Loop through patients
-for patients in tqdm(range(0, 40)):
+for patients in tqdm(range(31, 32)):
     images = []
     for i in range(1, 21):
         with h5py.File(filepath.format(i), 'r') as f:
             images.append(f['mc_output'][patients])
     uncertainty_map = np.stack(images, axis=-1).std(axis=-1)
-    make_dataframe(patients, uncertainty_map)
+    mean_prediction = np.stack(images, axis=-1).mean(axis=-1)
+    #make_dataframe(patients, uncertainty_map)
 
 
     # first check the shape (173, 191, 265) --> continue
@@ -50,16 +51,24 @@ for patients in tqdm(range(0, 40)):
         # _uncertainty_map = uncertainty_map.copy()
         # _uncertainty_map[_uncertainty_map < np.mean(_uncertainty_map)] = np.nan
         plt.figure()
+        plt.suptitle(
+            f'DICE~{test_model1["f1_score"][patients]:.8f}\n'
+            f'Avg~{uncertainty_map.mean():.8f} - Max~{uncertainty_map.max():.8f}\n'
+            f'Slice Avg~{uncertainty_map[j, :, :].mean():.8f} Slice Max~{uncertainty_map[j, :, :].max():.8f}\n'
+        )
+
+        # Plot Ground truth and prediction
+        plt.subplot(1, 2, 1)
         # plt.imshow(raw_images[patients][j, :, :, 0], 'gray')
         plt.contour(ground_truths[patients][j, :, :, 0], 1, levels=[0.5], colors='blue')
         plt.contour(images[0][j, :, :, 0], 1, levels=[0.5], colors='red')
-        plt.title(
-            f'DICE~{test_model1["f1_score"][patients]:.8f}\n'
-            f'Avg~{uncertainty_map.mean():.8f} - Max~{uncertainty_map.max():.8f}\n'
-            f'Slice Avg~{uncertainty_map[:, j, :].mean():.8f} Slice Max~{uncertainty_map[:, j, :].max():.8f}\n'
-        )
+        plt.contour(mean_prediction[j, :, :, 0], 1, levels=[0.5], colors='yellow')
         # im2 = plt.imshow(uncertainty_map[:, j, :])
         plt.imshow(uncertainty_map[j, :, :])
+
+        # Plot PET channel
+        plt.subplot(1, 2, 2)
+        plt.imshow(raw_images[patients][j, :, :, 1], 'jet')
 
         # ims.append([im2])
 
