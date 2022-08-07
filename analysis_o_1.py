@@ -48,7 +48,7 @@ for patients in tqdm(range(31, 32)):
     uncertainty_map = np.stack(images, axis=-1).std(axis=-1)
     _uncertainty_map = uncertainty_map.copy()
     _uncertainty_map[_uncertainty_map == 0] = np.nan
-    _uncertainty_map[_uncertainty_map < np.nanmean(_uncertainty_map)] = 0
+    _uncertainty_map[_uncertainty_map < np.nanmean(_uncertainty_map) + 3*(np.nanstd(_uncertainty_map))] = 0
     uncertainty_feature = np.stack(feature_importance, axis=-1).std(axis=-1)
     mean_prediction = np.stack(images, axis=-1).mean(axis=-1)
     error_region = np.abs(np.round(mean_prediction) - ground_truths[patients])
@@ -108,10 +108,10 @@ for patients in tqdm(range(31, 32)):
 
         # Save Images
         os.makedirs(
-            os.path.dirname('/Volumes/Seagate-AA/Thesis/uncertainty_output/images/Patient{0}/'.format(patients)),
+            os.path.dirname('/Volumes/Seagate-AA/Thesis/uncertainty_output/images_0_1/Patient{0}/'.format(patients)),
             exist_ok=True)
         plt.savefig(
-            '/Volumes/Seagate-AA/Thesis/uncertainty_output/images/Patient{0}/Patient{0}_{1}.png'.format(patients, j),
+            '/Volumes/Seagate-AA/Thesis/uncertainty_output/images_0_1/Patient{0}/Patient{0}_{1}.png'.format(patients, j),
             bbox_inches='tight')
 
     # Save animation
