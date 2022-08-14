@@ -5,6 +5,7 @@ import h5py
 import pandas as pd
 from tqdm import tqdm
 import os
+import matplotlib.patches as mpatches
 from matplotlib.colors import ListedColormap
 import matplotlib.animation as animation
 
@@ -39,9 +40,10 @@ with h5py.File(filepath_raw.format(1), 'r') as rf:
             ground_truths.append(rf[test_fold]['target'][i])
 
 # Loop through patients
-## ((20, 58), (30, 34), (38, 121))
+## ((20, 110, 58), (30, 169, 34), (38, 242, 121), (13, 73, 94), (21, 116, 75), (3, 16, 57))
+##((29, 164, 81), (32, 191, 63), (22, 120, 136))
 
-patient_watch = [(20, 110, 58)]
+patient_watch = ((29, 164, 81), (32, 191, 63), (22, 120, 136))
 for patients_tup in tqdm(patient_watch):
     patients = patients_tup[0]
     slice_idx = patients_tup[2]
@@ -58,8 +60,21 @@ for patients_tup in tqdm(patient_watch):
     _uncertainty_map[_uncertainty_map == 0] = np.nan
     _uncertainty_map[_uncertainty_map < np.nanmean(_uncertainty_map) + 3 * (np.nanstd(_uncertainty_map))] = 0
     _uncertainty_map[_uncertainty_map == np.nan] = 0
+
     uncertainty_feature = np.stack(feature_importance, axis=-1).std(axis=-1)
+    _uncertainty_feature = uncertainty_feature.copy()
+    _uncertainty_feature[_uncertainty_feature == 0] = np.nan
+    _uncertainty_feature[
+        _uncertainty_feature < np.nanmean(_uncertainty_feature) + 3 * (np.nanstd(_uncertainty_feature))] = 0
+    _uncertainty_feature[_uncertainty_feature == np.nan] = 0
+
     mean_feature_importance = np.stack(feature_importance, axis=-1).mean(axis=-1)
+    _mean_feature_importance = mean_feature_importance.copy()
+    _mean_feature_importance[_mean_feature_importance == 0] = np.nan
+    _mean_feature_importance[
+        _mean_feature_importance < np.nanmean(_mean_feature_importance) + 3 * (np.nanstd(_mean_feature_importance))] = 0
+    _mean_feature_importance[_mean_feature_importance == np.nan] = 0
+
     error_region = np.abs(np.round(mean_prediction) - ground_truths[patients])
     plot_rows = 1
     plot_columns = 4
@@ -74,37 +89,43 @@ for patients_tup in tqdm(patient_watch):
         # _uncertainty_map[_uncertainty_map < np.mean(_uncertainty_map)] = np.nan
         plt.figure(figsize=[50, 10])
         plt.suptitle(
-            f'patient_idx~{patient_idx} - slice_idx~{slice_idx} - Patient DICE~{test_model1["f1_score"][patients]:.8f} - Error dice~{data_file["error_dice_max"][patients]:.8f}\n',
-            fontsize=40
+            f'patient_idx~{patient_idx} - slice_idx~{slice_idx} - Patient DICE~{test_model1["f1_score"][patients]:.8f} - Error dice~{data_file["error_dice_min"][patients]:.8f}\n',
+            fontsize=50, y=1.1
         )
 
         # Plot PET channel with ground truth and prediction
         plt.subplot(plot_rows, plot_columns, 1)
-        plt.title('PET/CT', fontsize=50)
+        plt.title('PET/CT', fontsize=40)
+        red_patch = mpatches.Patch(color='red', label='Predicted tumor')
+        blue_patch = mpatches.Patch(color='blue', label='Ground truth')
+
+
         plt.contour(ground_truths[patients][j, :, :, 0], 1, levels=[0.5], colors='blue')
         plt.contour(mean_prediction[j, :, :, 0], 1, levels=[0.5], colors='red')
         plt.imshow(raw_images[patients][j, :, :, 1], 'gray')
-        plt.axis('off')
 
-        # Plot Error Region
-        plt.subplot(plot_rows, plot_columns, 2)
-        plt.title('Error region', fontsize=50)
-        plt.imshow(raw_images[patients][j, :, :, 1], 'gray')
-        plt.imshow(error_region[j, :, :], cmap=ListedColormap(['black', 'red']), alpha=0.5)
+        plt.legend(handles=[red_patch, blue_patch], fontsize=25)
         plt.axis('off')
 
         # Plot Uncertainty in prediction
-        plt.subplot(plot_rows, plot_columns, 3)
-        plt.title('Uncertainty map', fontsize=50)
+        plt.subplot(plot_rows, plot_columns, 2)
+        plt.title('Uncertainty map', fontsize=40)
         plt.imshow(raw_images[patients][j, :, :, 1], 'gray')
         plt.imshow(_uncertainty_map[j, :, :], alpha=0.5)
         plt.axis('off')
 
-        # Plot Uncertainty in PET/CT feature importance
+        # CT feature importance
+        plt.subplot(plot_rows, plot_columns, 3)
+        plt.title('CT feature importance', fontsize=30)
+        plt.imshow(_uncertainty_feature[j, :, :, 0], 'Reds')
+        plt.imshow(_mean_feature_importance[j, :, :, 0], alpha=0.5, cmap='Greens')
+        plt.axis('off')
+
+        # Plot Uncertainty in PET feature importance
         plt.subplot(plot_rows, plot_columns, 4)
-        plt.title('Uncertainty in feature importance', fontsize=40)
-        plt.imshow(uncertainty_feature[j, :, :, 0])
-        plt.imshow(uncertainty_feature[j, :, :, 1], alpha=0.5)
+        plt.title('PET feature importance', fontsize=30)
+        plt.imshow(_uncertainty_feature[j, :, :, 1], 'Reds')
+        plt.imshow(_mean_feature_importance[j, :, :, 1], alpha=0.5,  cmap='Greens')
         plt.axis('off')
 
         plt.subplots_adjust(wspace=0.1, hspace=0.1)
@@ -112,10 +133,10 @@ for patients_tup in tqdm(patient_watch):
         # Save Images
         os.makedirs(
             os.path.dirname(
-                '/Volumes/Seagate-AA/Thesis/uncertainty_output/results_output/prediction/Patient{0}/'.format(patients)),
+                '/Volumes/Seagate-AA/Thesis/uncertainty_output/results_output/backprop/Patient{0}/'.format(patients)),
             exist_ok=True)
         plt.savefig(
-            '/Volumes/Seagate-AA/Thesis/uncertainty_output/results_output/prediction/Patient{0}/Patient{0}_{1}.png'.format(
+            '/Volumes/Seagate-AA/Thesis/uncertainty_output/results_output/backprop/Patient{0}/Patient{0}_{1}.png'.format(
                 patients, j),
             bbox_inches='tight')
 

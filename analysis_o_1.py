@@ -38,7 +38,7 @@ with h5py.File(filepath_raw.format(1), 'r') as rf:
             ground_truths.append(rf[test_fold]['target'][i])
 
 # Loop through patients
-for patients in tqdm(range(31, 32)):
+for patients in tqdm(range(20, 21)):
     images = []
     feature_importance = []
     for i in range(1, 21):
